@@ -6,186 +6,197 @@ const fs = require('fs');
 // ═══════════════════════════════════════════════════════════════════
 
 const DESIGNS = {
-  "light": {
-    "name": "Light & Minimalistic",
-    "colors": {
-      "background": "#f5f5f0",
-      "pastDays": "#2d2d2d",
-      "today": "#4ade80",
-      "futureDays": "#d4d4d4",
-      "progressBar": "#4ade80",
-      "progressBarBg": "#e5e5e5",
-      "year": "#9ca3af"
+  // Design 1: Hell & Minimalistisch (Dein aktuelles)
+  light: {
+    name: 'Light & Minimalistic',
+    colors: {
+      background: '#f5f5f0',
+      pastDays: '#2d2d2d',
+      today: '#4ade80',
+      futureDays: '#d4d4d4',
+      progressBar: '#4ade80',
+      progressBarBg: '#e5e5e5',
+      year: '#9ca3af',
     },
-    "dots": {
-      "size": 14,
-      "spacing": 42,
-      "columns": 21
+    dots: {
+      size: 14,
+      spacing: 42,
+      columns: 21,
     },
-    "position": {
-      "verticalOffset": 100
+    position: {
+      verticalOffset: -50,
     },
-    "progressBar": {
-      "show": true,
-      "height": 4,
-      "distanceFromDots": 40
+    progressBar: {
+      show: true,
+      height: 4,
+      distanceFromDots: 40,
     },
-    "yearLabel": {
-      "show": true,
-      "fontSize": 32,
-      "distanceFromBar": 60
-    }
+    yearLabel: {
+      show: true,
+      fontSize: 32,
+      distanceFromBar: 60,
+    },
   },
-  "dark": {
-    "name": "Dark Mode",
-    "colors": {
-      "background": "#1a1a1a",
-      "pastDays": "#ffffff",
-      "today": "#ff69b4",
-      "futureDays": "#404040",
-      "progressBar": "#ff69b4",
-      "progressBarBg": "#2d2d2d",
-      "year": "#6b7280"
+
+  // Design 2: Dunkel (Dark Mode)
+  dark: {
+    name: 'Dark Mode',
+    colors: {
+      background: '#1a1a1a',
+      pastDays: '#ffffff',
+      today: '#60a5fa',
+      futureDays: '#404040',
+      progressBar: '#60a5fa',
+      progressBarBg: '#2d2d2d',
+      year: '#6b7280',
     },
-    "dots": {
-      "size": 14,
-      "spacing": 42,
-      "columns": 21
+    dots: {
+      size: 14,
+      spacing: 42,
+      columns: 21,
     },
-    "position": {
-      "verticalOffset": 100
+    position: {
+      verticalOffset: -50,
     },
-    "progressBar": {
-      "show": true,
-      "height": 4,
-      "distanceFromDots": 40
+    progressBar: {
+      show: true,
+      height: 4,
+      distanceFromDots: 40,
     },
-    "yearLabel": {
-      "show": true,
-      "fontSize": 32,
-      "distanceFromBar": 60
-    }
+    yearLabel: {
+      show: true,
+      fontSize: 32,
+      distanceFromBar: 60,
+    },
   },
-  "pink": {
-    "name": "Pink Pastel",
-    "colors": {
-      "background": "#fff5f5",
-      "pastDays": "#4a5568",
-      "today": "#f472b6",
-      "futureDays": "#e5e7eb",
-      "progressBar": "#f472b6",
-      "progressBarBg": "#fce7f3",
-      "year": "#9ca3af"
+
+  // Design 3: Rosa/Pink
+  pink: {
+    name: 'Pink Pastel',
+    colors: {
+      background: '#fff5f5',
+      pastDays: '#4a5568',
+      today: '#f472b6',
+      futureDays: '#e5e7eb',
+      progressBar: '#f472b6',
+      progressBarBg: '#fce7f3',
+      year: '#9ca3af',
     },
-    "dots": {
-      "size": 14,
-      "spacing": 42,
-      "columns": 21
+    dots: {
+      size: 14,
+      spacing: 42,
+      columns: 21,
     },
-    "position": {
-      "verticalOffset": 100
+    position: {
+      verticalOffset: -50,
     },
-    "progressBar": {
-      "show": true,
-      "height": 4,
-      "distanceFromDots": 40
+    progressBar: {
+      show: true,
+      height: 4,
+      distanceFromDots: 40,
     },
-    "yearLabel": {
-      "show": true,
-      "fontSize": 32,
-      "distanceFromBar": 60
-    }
+    yearLabel: {
+      show: true,
+      fontSize: 32,
+      distanceFromBar: 60,
+    },
   },
-  "ocean": {
-    "name": "Ocean Blue",
-    "colors": {
-      "background": "#f0f9ff",
-      "pastDays": "#1e3a8a",
-      "today": "#0ea5e9",
-      "futureDays": "#bfdbfe",
-      "progressBar": "#0ea5e9",
-      "progressBarBg": "#dbeafe",
-      "year": "#64748b"
+
+  // Design 4: Blau/Ocean
+  ocean: {
+    name: 'Ocean Blue',
+    colors: {
+      background: '#f0f9ff',
+      pastDays: '#1e3a8a',
+      today: '#0ea5e9',
+      futureDays: '#bfdbfe',
+      progressBar: '#0ea5e9',
+      progressBarBg: '#dbeafe',
+      year: '#64748b',
     },
-    "dots": {
-      "size": 14,
-      "spacing": 42,
-      "columns": 21
+    dots: {
+      size: 14,
+      spacing: 42,
+      columns: 21,
     },
-    "position": {
-      "verticalOffset": 100
+    position: {
+      verticalOffset: -50,
     },
-    "progressBar": {
-      "show": true,
-      "height": 4,
-      "distanceFromDots": 40
+    progressBar: {
+      show: true,
+      height: 4,
+      distanceFromDots: 40,
     },
-    "yearLabel": {
-      "show": true,
-      "fontSize": 32,
-      "distanceFromBar": 60
-    }
+    yearLabel: {
+      show: true,
+      fontSize: 32,
+      distanceFromBar: 60,
+    },
   },
-  "minimal": {
-    "name": "Pure Black & White",
-    "colors": {
-      "background": "#ffffff",
-      "pastDays": "#000000",
-      "today": "#ef4444",
-      "futureDays": "#e5e5e5",
-      "progressBar": "#000000",
-      "progressBarBg": "#f3f4f6",
-      "year": "#9ca3af"
+
+  // Design 5: Minimalistisch Schwarz-Weiß
+  minimal: {
+    name: 'Pure Black & White',
+    colors: {
+      background: '#ffffff',
+      pastDays: '#000000',
+      today: '#ef4444',
+      futureDays: '#e5e5e5',
+      progressBar: '#000000',
+      progressBarBg: '#f3f4f6',
+      year: '#9ca3af',
     },
-    "dots": {
-      "size": 14,
-      "spacing": 42,
-      "columns": 21
+    dots: {
+      size: 14,
+      spacing: 42,
+      columns: 21,
     },
-    "position": {
-      "verticalOffset": 100
+    position: {
+      verticalOffset: -50,
     },
-    "progressBar": {
-      "show": true,
-      "height": 4,
-      "distanceFromDots": 40
+    progressBar: {
+      show: true,
+      height: 4,
+      distanceFromDots: 40,
     },
-    "yearLabel": {
-      "show": true,
-      "fontSize": 32,
-      "distanceFromBar": 60
-    }
+    yearLabel: {
+      show: true,
+      fontSize: 32,
+      distanceFromBar: 60,
+    },
   },
-  "compact": {
-    "name": "Compact",
-    "colors": {
-      "background": "#fafaf9",
-      "pastDays": "#292524",
-      "today": "#22c55e",
-      "futureDays": "#d6d3d1",
-      "progressBar": "#22c55e",
-      "progressBarBg": "#e7e5e4",
-      "year": "#78716c"
+
+  // Design 6: Kleiner & kompakter (für kleinere iPhones)
+  compact: {
+    name: 'Compact',
+    colors: {
+      background: '#fafaf9',
+      pastDays: '#292524',
+      today: '#22c55e',
+      futureDays: '#d6d3d1',
+      progressBar: '#22c55e',
+      progressBarBg: '#e7e5e4',
+      year: '#78716c',
     },
-    "dots": {
-      "size": 12,
-      "spacing": 38,
-      "columns": 21
+    dots: {
+      size: 12,             // Kleinere Punkte
+      spacing: 38,          // Weniger Abstand
+      columns: 21,
     },
-    "position": {
-      "verticalOffset": 80
+    position: {
+      verticalOffset: -30,
     },
-    "progressBar": {
-      "show": true,
-      "height": 3,
-      "distanceFromDots": 35
+    progressBar: {
+      show: true,
+      height: 3,
+      distanceFromDots: 35,
     },
-    "yearLabel": {
-      "show": true,
-      "fontSize": 28,
-      "distanceFromBar": 50
-    }
-  }
+    yearLabel: {
+      show: true,
+      fontSize: 28,
+      distanceFromBar: 50,
+    },
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -213,20 +224,35 @@ function generateWallpaper(config, filename) {
   ctx.fillRect(0, 0, 1170, 2532);
 
   // Grid berechnen
-  const cols = config.dots.columns;
+  const cols = 14; // 2 Wochen (7+7)
   const dotSize = config.dots.size;
   const spacing = config.dots.spacing;
-  const gridWidth = (cols - 1) * spacing + dotSize;
+  const weekGap = 20; // Lücke zwischen den Wochen
+  
+  // Berechne Grid-Breite mit Lücke
+  const firstWeekWidth = 6 * spacing + dotSize; // 7 Punkte
+  const secondWeekWidth = 6 * spacing + dotSize; // 7 Punkte
+  const gridWidth = firstWeekWidth + weekGap + secondWeekWidth;
+  
   const gridHeight = Math.ceil(daysInYear / cols) * spacing;
   const startX = (1170 - gridWidth) / 2;
   const startY = (2532 - gridHeight) / 2 + config.position.verticalOffset;
 
-  // Punkte zeichnen
+  // Punkte zeichnen mit Wochen-Lücke
   for (let i = 0; i < daysInYear; i++) {
     const row = Math.floor(i / cols);
     const col = i % cols;
     
-    const x = startX + col * spacing + dotSize / 2;
+    // X-Position mit Lücke nach 7 Punkten
+    let x;
+    if (col < 7) {
+      // Erste Woche
+      x = startX + col * spacing + dotSize / 2;
+    } else {
+      // Zweite Woche (mit Lücke)
+      x = startX + firstWeekWidth + weekGap + (col - 7) * spacing + dotSize / 2;
+    }
+    
     const y = startY + row * spacing + dotSize / 2;
 
     ctx.beginPath();
@@ -242,6 +268,26 @@ function generateWallpaper(config, filename) {
     
     ctx.fill();
   }
+
+  // Monatslinien zeichnen (ca. alle 30 Tage)
+  const monthDays = [31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]; // Ende jedes Monats
+  
+  monthDays.forEach(day => {
+    if (day < daysInYear) {
+      const row = Math.floor(day / cols);
+      const y = startY + row * spacing + spacing / 2;
+      
+      // Dezente horizontale Linie
+      ctx.strokeStyle = config.colors.futureDays;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.moveTo(startX - 10, y);
+      ctx.lineTo(startX + gridWidth + 10, y);
+      ctx.stroke();
+      ctx.globalAlpha = 1.0;
+    }
+  });
 
   // Fortschrittsbalken (optional)
   if (config.progressBar.show) {
@@ -294,4 +340,3 @@ for (const [key, config] of Object.entries(DESIGNS)) {
 }
 
 console.log('🎉 All wallpapers generated successfully!');
-
