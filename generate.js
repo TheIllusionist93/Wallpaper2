@@ -285,53 +285,21 @@ function generateWallpaper(config, filename) {
     const col = day % cols;
     
     // Berechne Position des letzten Punkts im Monat
-    let x;
+    let lastX;
     if (col < 7) {
-      x = startX + col * spacing + dotSize / 2;
+      lastX = startX + col * spacing + dotSize / 2;
     } else {
-      x = startX + firstWeekWidth + weekGap + (col - 7) * spacing + dotSize / 2;
+      lastX = startX + firstWeekWidth + weekGap + (col - 7) * spacing + dotSize / 2;
     }
-    const y = startY + row * spacing + dotSize / 2;
+    const lastY = startY + row * spacing + dotSize / 2;
     
-    // Horizontale Linie bis zum Rand (oder bis zur nächsten Reihe)
-    const lineStartX = x + spacing / 2;
-    const lineEndX = startX + gridWidth + 10;
-    const lineY = y + spacing / 2;
-    
-    ctx.beginPath();
-    ctx.moveTo(lineStartX, lineY);
-    ctx.lineTo(lineEndX, lineY);
-    ctx.stroke();
-    
-    // Wenn wir nicht am Ende der Reihe sind, zeichne auch vertikale Linie
-    if (col < cols - 1) {
-      const verticalX = x + spacing / 2;
-      
-      ctx.beginPath();
-      ctx.moveTo(verticalX, lineY);
-      ctx.lineTo(verticalX, lineY + spacing / 2);
-      ctx.stroke();
-    }
-    
-    // Wenn nächste Reihe existiert, zeichne vertikale Linie nach unten
+    // Wenn nächste Reihe existiert (Monat geht weiter)
     if (day + 1 < daysInYear) {
       const nextRow = Math.floor((day + 1) / cols);
+      
       if (nextRow > row) {
-        // Monat geht in neue Reihe
-        const verticalX = startX - 10;
-        const verticalStartY = lineY;
-        const verticalEndY = startY + nextRow * spacing - spacing / 2;
+        // Monat wechselt in neue Reihe - zeichne eckiges "S"
         
-        ctx.beginPath();
-        ctx.moveTo(verticalX, verticalStartY);
-        ctx.lineTo(verticalX, verticalEndY);
-        ctx.stroke();
-        
-        // Horizontale Linie am Anfang der neuen Reihe
-        ctx.beginPath();
-        ctx.moveTo(verticalX, verticalEndY);
-        
-        // Berechne wo der erste Punkt der neuen Reihe ist
         const nextCol = (day + 1) % cols;
         let nextX;
         if (nextCol < 7) {
@@ -339,8 +307,41 @@ function generateWallpaper(config, filename) {
         } else {
           nextX = startX + firstWeekWidth + weekGap + (nextCol - 7) * spacing + dotSize / 2;
         }
+        const nextY = startY + nextRow * spacing + dotSize / 2;
         
-        ctx.lineTo(nextX - spacing / 2, verticalEndY);
+        // Teil 1: Horizontale Linie UNTERHALB der aktuellen Reihe (vom letzten Punkt bis zum Ende)
+        const lineY1 = lastY + spacing / 2;
+        ctx.beginPath();
+        ctx.moveTo(lastX + spacing / 2, lineY1);
+        ctx.lineTo(startX + gridWidth + 10, lineY1);
+        ctx.stroke();
+        
+        // Teil 2: Vertikale Linie rechts (runter zur nächsten Reihe)
+        const verticalX = startX + gridWidth + 10;
+        ctx.beginPath();
+        ctx.moveTo(verticalX, lineY1);
+        ctx.lineTo(verticalX, nextY - spacing / 2);
+        ctx.stroke();
+        
+        // Teil 3: Horizontale Linie OBERHALB der neuen Reihe (vom Ende bis zum ersten neuen Punkt)
+        const lineY2 = nextY - spacing / 2;
+        ctx.beginPath();
+        ctx.moveTo(verticalX, lineY2);
+        ctx.lineTo(nextX - spacing / 2, lineY2);
+        ctx.stroke();
+        
+        // Teil 4: Vertikale Linie beim neuen Punkt (runter zum Punkt)
+        ctx.beginPath();
+        ctx.moveTo(nextX - spacing / 2, lineY2);
+        ctx.lineTo(nextX - spacing / 2, nextY);
+        ctx.stroke();
+      } else {
+        // Monat endet in derselben Reihe - nur kurze vertikale Linie
+        const verticalX = lastX + spacing / 2;
+        
+        ctx.beginPath();
+        ctx.moveTo(verticalX, lastY - spacing / 2);
+        ctx.lineTo(verticalX, lastY + spacing / 2);
         ctx.stroke();
       }
     }
