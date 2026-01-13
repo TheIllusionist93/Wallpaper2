@@ -269,20 +269,24 @@ function generateWallpaper(config, filename) {
     ctx.fill();
   }
 
-  // Monatslinien zeichnen (exakte Monatswechsel) - durchgängiges eckiges "S"
-  const monthEnds = [31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-  const monthEndsLeap = [31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
-  const monthDays = isLeap ? monthEndsLeap : monthEnds;
+// Monatslinien zeichnen - für ALLE Monatswechsel
+const daysPerMonth = isLeap 
+  ? [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  : [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+ctx.strokeStyle = config.colors.progressBar;
+ctx.lineWidth = 2;
+ctx.globalAlpha = 0.4;
+
+let cumulativeDays = 0;
+daysPerMonth.forEach((days, monthIndex) => {
+  cumulativeDays += days;
+  const day = cumulativeDays - 1; // Letzter Tag des Monats (0-basiert)
   
-  ctx.strokeStyle = config.colors.progressBar;
-  ctx.lineWidth = 2;
-  ctx.globalAlpha = 0.4;
+  if (day >= daysInYear) return;
   
-  monthDays.forEach(day => {
-    if (day >= daysInYear) return;
-    
-    const row = Math.floor(day / cols);
-    const col = day % cols;
+  const row = Math.floor(day / cols);
+  const col = day % cols;
     
     // Position des letzten Punkts im aktuellen Monat
     let lastX;
