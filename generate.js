@@ -227,7 +227,7 @@ function generateWallpaper(config, filename) {
   const cols = 14; // 2 Wochen (7+7)
   const dotSize = config.dots.size;
   const spacing = config.dots.spacing;
-  const weekGap = 20; // Lücke zwischen den Wochen
+  const weekGap = 35; // Größere Lücke zwischen den Wochen
   
   // Berechne Grid-Breite mit Lücke
   const firstWeekWidth = 6 * spacing + dotSize; // 7 Punkte
@@ -269,25 +269,84 @@ function generateWallpaper(config, filename) {
     ctx.fill();
   }
 
-  // Monatslinien zeichnen (ca. alle 30 Tage)
-  const monthDays = [31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]; // Ende jedes Monats
+  // Monatslinien zeichnen (exakte Monatswechsel)
+  const monthEnds = [31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]; // Ende jedes Monats (nicht-Schaltjahr)
+  const monthEndsLeap = [31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]; // Schaltjahr
+  const monthDays = isLeap ? monthEndsLeap : monthEnds;
+  
+  ctx.strokeStyle = config.colors.progressBar; // Nutze die Akzentfarbe
+  ctx.lineWidth = 2;
+  ctx.globalAlpha = 0.4;
   
   monthDays.forEach(day => {
-    if (day < daysInYear) {
-      const row = Math.floor(day / cols);
-      const y = startY + row * spacing + spacing / 2;
+    if (day >= daysInYear) return;
+    
+    const row = Math.floor(day / cols);
+    const col = day % cols;
+    
+    // Berechne Position des letzten Punkts im Monat
+    let x;
+    if (col < 7) {
+      x = startX + col * spacing + dotSize / 2;
+    } else {
+      x = startX + firstWeekWidth + weekGap + (col - 7) * spacing + dotSize / 2;
+    }
+    const y = startY + row * spacing + dotSize / 2;
+    
+    // Horizontale Linie bis zum Rand (oder bis zur nächsten Reihe)
+    const lineStartX = x + spacing / 2;
+    const lineEndX = startX + gridWidth + 10;
+    const lineY = y + spacing / 2;
+    
+    ctx.beginPath();
+    ctx.moveTo(lineStartX, lineY);
+    ctx.lineTo(lineEndX, lineY);
+    ctx.stroke();
+    
+    // Wenn wir nicht am Ende der Reihe sind, zeichne auch vertikale Linie
+    if (col < cols - 1) {
+      const verticalX = x + spacing / 2;
       
-      // Dezente horizontale Linie
-      ctx.strokeStyle = config.colors.futureDays;
-      ctx.lineWidth = 1;
-      ctx.globalAlpha = 0.3;
       ctx.beginPath();
-      ctx.moveTo(startX - 10, y);
-      ctx.lineTo(startX + gridWidth + 10, y);
+      ctx.moveTo(verticalX, lineY);
+      ctx.lineTo(verticalX, lineY + spacing / 2);
       ctx.stroke();
-      ctx.globalAlpha = 1.0;
+    }
+    
+    // Wenn nächste Reihe existiert, zeichne vertikale Linie nach unten
+    if (day + 1 < daysInYear) {
+      const nextRow = Math.floor((day + 1) / cols);
+      if (nextRow > row) {
+        // Monat geht in neue Reihe
+        const verticalX = startX - 10;
+        const verticalStartY = lineY;
+        const verticalEndY = startY + nextRow * spacing - spacing / 2;
+        
+        ctx.beginPath();
+        ctx.moveTo(verticalX, verticalStartY);
+        ctx.lineTo(verticalX, verticalEndY);
+        ctx.stroke();
+        
+        // Horizontale Linie am Anfang der neuen Reihe
+        ctx.beginPath();
+        ctx.moveTo(verticalX, verticalEndY);
+        
+        // Berechne wo der erste Punkt der neuen Reihe ist
+        const nextCol = (day + 1) % cols;
+        let nextX;
+        if (nextCol < 7) {
+          nextX = startX + nextCol * spacing + dotSize / 2;
+        } else {
+          nextX = startX + firstWeekWidth + weekGap + (nextCol - 7) * spacing + dotSize / 2;
+        }
+        
+        ctx.lineTo(nextX - spacing / 2, verticalEndY);
+        ctx.stroke();
+      }
     }
   });
+  
+  ctx.globalAlpha = 1.0;
 
   // Fortschrittsbalken (optional)
   if (config.progressBar.show) {
