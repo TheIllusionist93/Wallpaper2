@@ -269,7 +269,7 @@ function generateWallpaper(config, filename) {
     ctx.fill();
   }
 
-// Monatslinien zeichnen - für ALLE Monatswechsel
+  // Monatslinien zeichnen - konsistente Logik
 const daysPerMonth = isLeap 
   ? [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
   : [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -279,85 +279,65 @@ ctx.lineWidth = 2;
 ctx.globalAlpha = 0.4;
 
 let cumulativeDays = 0;
-daysPerMonth.forEach((days, monthIndex) => {
-  cumulativeDays += days;
-  const day = cumulativeDays - 1; // Letzter Tag des Monats (0-basiert)
+
+for (let monthIndex = 0; monthIndex < daysPerMonth.length - 1; monthIndex++) {
+  cumulativeDays += daysPerMonth[monthIndex];
+  const lastDayOfMonth = cumulativeDays - 1; // 0-basiert
   
-  if (day >= daysInYear) return;
+  if (lastDayOfMonth >= daysInYear) break;
   
-  const row = Math.floor(day / cols);
-  const col = day % cols;
+  const row = Math.floor(lastDayOfMonth / cols);
+  const col = lastDayOfMonth % cols;
+  
+  // Position des letzten Punkts im aktuellen Monat
+  let lastX;
+  if (col < 7) {
+    lastX = startX + col * spacing + dotSize / 2;
+  } else {
+    lastX = startX + firstWeekWidth + weekGap + (col - 7) * spacing + dotSize / 2;
+  }
+  const lastY = startY + row * spacing + dotSize / 2;
+  
+  // Prüfe ob der nächste Tag (erster Tag des neuen Monats) in der nächsten Reihe ist
+  const firstDayNextMonth = cumulativeDays;
+  if (firstDayNextMonth < daysInYear) {
+    const nextRow = Math.floor(firstDayNextMonth / cols);
     
-    // Position des letzten Punkts im aktuellen Monat
-    let lastX;
-    if (col < 7) {
-      lastX = startX + col * spacing + dotSize / 2;
-    } else {
-      lastX = startX + firstWeekWidth + weekGap + (col - 7) * spacing + dotSize / 2;
-    }
-    const lastY = startY + row * spacing + dotSize / 2;
-    
-    // Prüfe ob der Monat in die nächste Reihe geht
-    if (day + 1 < daysInYear) {
-      const nextRow = Math.floor((day + 1) / cols);
-      
-      if (nextRow > row) {
-        // Monat wechselt Reihe - zeichne durchgängiges eckiges "S"
-        
-        const nextCol = (day + 1) % cols;
-        let nextX;
-        if (nextCol < 7) {
-          nextX = startX + nextCol * spacing + dotSize / 2;
-        } else {
-          nextX = startX + firstWeekWidth + weekGap + (nextCol - 7) * spacing + dotSize / 2;
-        }
-        const nextY = startY + nextRow * spacing + dotSize / 2;
-        
-        // Zeichne eine durchgehende Linie in einem Path
-        ctx.beginPath();
-        
-        // Start: Links vom letzten Punkt des Monats
-        ctx.moveTo(startX - 10, lastY + spacing / 2);
-        
-        // 1. Horizontal nach rechts bis nach dem letzten Punkt (UNTERHALB)
-        ctx.lineTo(lastX + spacing / 2, lastY + spacing / 2);
-        
-        // 2. Vertikal nach oben zum Punkt
-        ctx.lineTo(lastX + spacing / 2, lastY);
-        
-        // 3. Vertikal nach unten (unter den Punkt)
-        ctx.lineTo(lastX + spacing / 2, lastY + spacing / 2);
-        
-        // 4. Horizontal weiter nach rechts bis zum Rand
-        ctx.lineTo(startX + gridWidth + 10, lastY + spacing / 2);
-        
-        // 5. Vertikal runter zur nächsten Reihe
-        ctx.lineTo(startX + gridWidth + 10, nextY - spacing / 2);
-        
-        // 6. Horizontal nach links (OBERHALB der neuen Reihe)
-        ctx.lineTo(nextX - spacing / 2, nextY - spacing / 2);
-        
-        // 7. Vertikal runter zum neuen Punkt
-        ctx.lineTo(nextX - spacing / 2, nextY);
-        
-        // 8. Vertikal weiter runter
-        ctx.lineTo(nextX - spacing / 2, nextY + spacing / 2);
-        
-        // 9. Horizontal weiter nach links bis zum Rand
-        ctx.lineTo(startX - 10, nextY - spacing / 2);
-        
-        ctx.stroke();
+    if (nextRow > row) {
+      // Monat wechselt Reihe - zeichne durchgängiges eckiges "S"
+      const nextCol = firstDayNextMonth % cols;
+      let nextX;
+      if (nextCol < 7) {
+        nextX = startX + nextCol * spacing + dotSize / 2;
       } else {
-        // Monat endet in derselben Reihe - nur vertikale Trennlinie
-        ctx.beginPath();
-        ctx.moveTo(lastX + spacing / 2, lastY - spacing / 2);
-        ctx.lineTo(lastX + spacing / 2, lastY + spacing / 2);
-        ctx.stroke();
+        nextX = startX + firstWeekWidth + weekGap + (nextCol - 7) * spacing + dotSize / 2;
       }
+      const nextY = startY + nextRow * spacing + dotSize / 2;
+      
+      // Zeichne durchgehende S-Linie
+      ctx.beginPath();
+      ctx.moveTo(startX - 10, lastY + spacing / 2);
+      ctx.lineTo(lastX + spacing / 2, lastY + spacing / 2);
+      ctx.lineTo(lastX + spacing / 2, lastY);
+      ctx.lineTo(lastX + spacing / 2, lastY + spacing / 2);
+      ctx.lineTo(startX + gridWidth + 10, lastY + spacing / 2);
+      ctx.lineTo(startX + gridWidth + 10, nextY - spacing / 2);
+      ctx.lineTo(nextX - spacing / 2, nextY - spacing / 2);
+      ctx.lineTo(nextX - spacing / 2, nextY);
+      ctx.lineTo(nextX - spacing / 2, nextY + spacing / 2);
+      ctx.lineTo(startX - 10, nextY - spacing / 2);
+      ctx.stroke();
+    } else {
+      // Monat endet in derselben Reihe - nur vertikale Trennlinie
+      ctx.beginPath();
+      ctx.moveTo(lastX + spacing / 2, lastY - spacing / 2);
+      ctx.lineTo(lastX + spacing / 2, lastY + spacing / 2);
+      ctx.stroke();
     }
-  });
-  
-  ctx.globalAlpha = 1.0;
+  }
+}
+
+ctx.globalAlpha = 1.0;
 
   // Fortschrittsbalken (optional)
   if (config.progressBar.show) {
