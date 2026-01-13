@@ -166,19 +166,15 @@ for (let monthIndex = 0; monthIndex < daysPerMonth.length - 1; monthIndex++) {
       ctx.lineTo(startX - 10, nextY - spacing / 2);
       ctx.stroke();
     } else {
-      // Monat bleibt in gleicher Reihe - kleine S-Linie
+      // Monat bleibt in gleicher Reihe - S-Linie: ____|¯¯¯¯
       ctx.beginPath();
-      // Horizontale Linie links vom letzten Punkt bis zum Trennstrich
+      // Horizontale Linie links vom letzten Punkt bis zum Trennstrich (UNTEN)
       ctx.moveTo(startX - 10, lastY + spacing / 2);
       ctx.lineTo(lastX + spacing / 2, lastY + spacing / 2);
       // Vertikaler Strich (nach oben)
       ctx.lineTo(lastX + spacing / 2, lastY - spacing / 2);
-      // Horizontale Linie weiter bis zum nächsten Punkt
-      ctx.lineTo(nextX - spacing / 2, lastY - spacing / 2);
-      // Vertikaler Strich (nach unten)
-      ctx.lineTo(nextX - spacing / 2, lastY + spacing / 2);
-      // Horizontale Linie nach rechts bis zum Rand
-      ctx.lineTo(startX + gridWidth + 10, lastY + spacing / 2);
+      // Horizontale Linie weiter nach rechts (OBEN)
+      ctx.lineTo(startX + gridWidth + 10, lastY - spacing / 2);
       ctx.stroke();
     }
   }
