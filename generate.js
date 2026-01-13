@@ -21,7 +21,7 @@ const config = {
     spacing: 42,
   },
   layout: {
-    verticalOffset: 150,
+    verticalOffset: 180,
   },
   progressBar: {
     show: true,
