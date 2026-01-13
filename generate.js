@@ -269,12 +269,12 @@ function generateWallpaper(config, filename) {
     ctx.fill();
   }
 
-  // Monatslinien zeichnen (exakte Monatswechsel)
-  const monthEnds = [31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]; // Ende jedes Monats (nicht-Schaltjahr)
-  const monthEndsLeap = [31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]; // Schaltjahr
+  // Monatslinien zeichnen (exakte Monatswechsel) - durchgängiges eckiges "S"
+  const monthEnds = [31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+  const monthEndsLeap = [31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
   const monthDays = isLeap ? monthEndsLeap : monthEnds;
   
-  ctx.strokeStyle = config.colors.progressBar; // Nutze die Akzentfarbe
+  ctx.strokeStyle = config.colors.progressBar;
   ctx.lineWidth = 2;
   ctx.globalAlpha = 0.4;
   
@@ -284,7 +284,7 @@ function generateWallpaper(config, filename) {
     const row = Math.floor(day / cols);
     const col = day % cols;
     
-    // Berechne Position des letzten Punkts im Monat
+    // Position des letzten Punkts im aktuellen Monat
     let lastX;
     if (col < 7) {
       lastX = startX + col * spacing + dotSize / 2;
@@ -293,12 +293,12 @@ function generateWallpaper(config, filename) {
     }
     const lastY = startY + row * spacing + dotSize / 2;
     
-    // Wenn nächste Reihe existiert (Monat geht weiter)
+    // Prüfe ob der Monat in die nächste Reihe geht
     if (day + 1 < daysInYear) {
       const nextRow = Math.floor((day + 1) / cols);
       
       if (nextRow > row) {
-        // Monat wechselt in neue Reihe - zeichne eckiges "S"
+        // Monat wechselt Reihe - zeichne durchgängiges eckiges "S"
         
         const nextCol = (day + 1) % cols;
         let nextX;
@@ -309,39 +309,45 @@ function generateWallpaper(config, filename) {
         }
         const nextY = startY + nextRow * spacing + dotSize / 2;
         
-        // Teil 1: Horizontale Linie UNTERHALB der aktuellen Reihe (vom letzten Punkt bis zum Ende)
-        const lineY1 = lastY + spacing / 2;
+        // Zeichne eine durchgehende Linie in einem Path
         ctx.beginPath();
-        ctx.moveTo(lastX + spacing / 2, lineY1);
-        ctx.lineTo(startX + gridWidth + 10, lineY1);
-        ctx.stroke();
         
-        // Teil 2: Vertikale Linie rechts (runter zur nächsten Reihe)
-        const verticalX = startX + gridWidth + 10;
-        ctx.beginPath();
-        ctx.moveTo(verticalX, lineY1);
-        ctx.lineTo(verticalX, nextY - spacing / 2);
-        ctx.stroke();
+        // Start: Links vom letzten Punkt des Monats
+        ctx.moveTo(startX - 10, lastY + spacing / 2);
         
-        // Teil 3: Horizontale Linie OBERHALB der neuen Reihe (vom Ende bis zum ersten neuen Punkt)
-        const lineY2 = nextY - spacing / 2;
-        ctx.beginPath();
-        ctx.moveTo(verticalX, lineY2);
-        ctx.lineTo(nextX - spacing / 2, lineY2);
-        ctx.stroke();
+        // 1. Horizontal nach rechts bis nach dem letzten Punkt (UNTERHALB)
+        ctx.lineTo(lastX + spacing / 2, lastY + spacing / 2);
         
-        // Teil 4: Vertikale Linie beim neuen Punkt (runter zum Punkt)
-        ctx.beginPath();
-        ctx.moveTo(nextX - spacing / 2, lineY2);
+        // 2. Vertikal nach oben zum Punkt
+        ctx.lineTo(lastX + spacing / 2, lastY);
+        
+        // 3. Vertikal nach unten (unter den Punkt)
+        ctx.lineTo(lastX + spacing / 2, lastY + spacing / 2);
+        
+        // 4. Horizontal weiter nach rechts bis zum Rand
+        ctx.lineTo(startX + gridWidth + 10, lastY + spacing / 2);
+        
+        // 5. Vertikal runter zur nächsten Reihe
+        ctx.lineTo(startX + gridWidth + 10, nextY - spacing / 2);
+        
+        // 6. Horizontal nach links (OBERHALB der neuen Reihe)
+        ctx.lineTo(nextX - spacing / 2, nextY - spacing / 2);
+        
+        // 7. Vertikal runter zum neuen Punkt
         ctx.lineTo(nextX - spacing / 2, nextY);
+        
+        // 8. Vertikal weiter runter
+        ctx.lineTo(nextX - spacing / 2, nextY + spacing / 2);
+        
+        // 9. Horizontal weiter nach links bis zum Rand
+        ctx.lineTo(startX - 10, nextY - spacing / 2);
+        
         ctx.stroke();
       } else {
-        // Monat endet in derselben Reihe - nur kurze vertikale Linie
-        const verticalX = lastX + spacing / 2;
-        
+        // Monat endet in derselben Reihe - nur vertikale Trennlinie
         ctx.beginPath();
-        ctx.moveTo(verticalX, lastY - spacing / 2);
-        ctx.lineTo(verticalX, lastY + spacing / 2);
+        ctx.moveTo(lastX + spacing / 2, lastY - spacing / 2);
+        ctx.lineTo(lastX + spacing / 2, lastY + spacing / 2);
         ctx.stroke();
       }
     }
