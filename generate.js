@@ -113,7 +113,7 @@ for (let i = 0; i < daysInYear; i++) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// 📏 MONATSLINIEN ZEICHNEN (PINK)
+// 📏 MONATSLINIEN ZEICHNEN (PINK) - MIT HORIZONTALEN LINIEN
 // ═══════════════════════════════════════════════════════════════════
 
 const daysPerMonth = isLeap 
@@ -122,13 +122,13 @@ const daysPerMonth = isLeap
 
 ctx.strokeStyle = config.colors.monthLines;
 ctx.lineWidth = 2;
-ctx.globalAlpha = 0.4;
+ctx.globalAlpha = 0.5;
 
 let cumulativeDays = 0;
 
 for (let monthIndex = 0; monthIndex < daysPerMonth.length - 1; monthIndex++) {
   cumulativeDays += daysPerMonth[monthIndex];
-  const lastDayOfMonth = cumulativeDays - 1; // 0-basiert
+  const lastDayOfMonth = cumulativeDays - 1;
   
   if (lastDayOfMonth >= daysInYear) break;
   
@@ -144,50 +144,33 @@ for (let monthIndex = 0; monthIndex < daysPerMonth.length - 1; monthIndex++) {
   }
   const lastY = startY + row * spacing + dotSize / 2;
   
-  // Prüfe ob nächster Monat in neuer Reihe beginnt
   const firstDayNextMonth = cumulativeDays;
   if (firstDayNextMonth < daysInYear) {
     const nextRow = Math.floor(firstDayNextMonth / cols);
+    const nextCol = firstDayNextMonth % cols;
+    
+    let nextX;
+    if (nextCol < 7) {
+      nextX = startX + nextCol * spacing + dotSize / 2;
+    } else {
+      nextX = startX + firstWeekWidth + weekGap + (nextCol - 7) * spacing + dotSize / 2;
+    }
+    const nextY = startY + nextRow * spacing + dotSize / 2;
     
     if (nextRow > row) {
-      // Monat wechselt Reihe - zeichne komplette S-Linie
-      const nextCol = firstDayNextMonth % cols;
-      let nextX;
-      if (nextCol < 7) {
-        nextX = startX + nextCol * spacing + dotSize / 2;
-      } else {
-        nextX = startX + firstWeekWidth + weekGap + (nextCol - 7) * spacing + dotSize / 2;
-      }
-      const nextY = startY + nextRow * spacing + dotSize / 2;
-      
+      // Monat wechselt Reihe - komplette S-Linie
       ctx.beginPath();
       ctx.moveTo(startX - 10, lastY + spacing / 2);
-      ctx.lineTo(lastX + spacing / 2, lastY + spacing / 2);
-      ctx.lineTo(lastX + spacing / 2, lastY);
-      ctx.lineTo(lastX + spacing / 2, lastY + spacing / 2);
       ctx.lineTo(startX + gridWidth + 10, lastY + spacing / 2);
       ctx.lineTo(startX + gridWidth + 10, nextY - spacing / 2);
-      ctx.lineTo(nextX - spacing / 2, nextY - spacing / 2);
-      ctx.lineTo(nextX - spacing / 2, nextY);
-      ctx.lineTo(nextX - spacing / 2, nextY + spacing / 2);
       ctx.lineTo(startX - 10, nextY - spacing / 2);
       ctx.stroke();
     } else {
-      // Monat bleibt in gleicher Reihe - auch hier S-Linie aber kürzer
-      const nextCol = firstDayNextMonth % cols;
-      let nextX;
-      if (nextCol < 7) {
-        nextX = startX + nextCol * spacing + dotSize / 2;
-      } else {
-        nextX = startX + firstWeekWidth + weekGap + (nextCol - 7) * spacing + dotSize / 2;
-      }
-      
+      // Monat bleibt in gleicher Reihe - horizontale Linie zwischen den Punkten
+      const lineY = lastY + (nextY - lastY) / 2; // Mittig zwischen den Reihen
       ctx.beginPath();
-      // Horizontale Linie unter dem letzten Tag des Monats
-      ctx.moveTo(startX - 10, lastY + spacing / 2);
-      ctx.lineTo(nextX - spacing / 2, lastY + spacing / 2);
-      // Vertikale Linie hoch zum ersten Tag des neuen Monats
-      ctx.lineTo(nextX - spacing / 2, lastY - spacing / 2);
+      ctx.moveTo(lastX + spacing / 2, lineY);
+      ctx.lineTo(nextX - spacing / 2, lineY);
       ctx.stroke();
     }
   }
