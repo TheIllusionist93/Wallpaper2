@@ -158,7 +158,7 @@ for (let monthIndex = 0; monthIndex < daysPerMonth.length - 1; monthIndex++) {
     const nextY = startY + nextRow * spacing + dotSize / 2;
     
     if (nextRow > row) {
-      // Monat wechselt Reihe - komplette S-Linie
+      // Monat wechselt Reihe - große S-Linie
       ctx.beginPath();
       ctx.moveTo(startX - 10, lastY + spacing / 2);
       ctx.lineTo(startX + gridWidth + 10, lastY + spacing / 2);
@@ -166,11 +166,19 @@ for (let monthIndex = 0; monthIndex < daysPerMonth.length - 1; monthIndex++) {
       ctx.lineTo(startX - 10, nextY - spacing / 2);
       ctx.stroke();
     } else {
-      // Monat bleibt in gleicher Reihe - horizontale Linie zwischen den Punkten
-      const lineY = lastY + (nextY - lastY) / 2; // Mittig zwischen den Reihen
+      // Monat bleibt in gleicher Reihe - kleine S-Linie
       ctx.beginPath();
-      ctx.moveTo(lastX + spacing / 2, lineY);
-      ctx.lineTo(nextX - spacing / 2, lineY);
+      // Horizontale Linie links vom letzten Punkt bis zum Trennstrich
+      ctx.moveTo(startX - 10, lastY + spacing / 2);
+      ctx.lineTo(lastX + spacing / 2, lastY + spacing / 2);
+      // Vertikaler Strich (nach oben)
+      ctx.lineTo(lastX + spacing / 2, lastY - spacing / 2);
+      // Horizontale Linie weiter bis zum nächsten Punkt
+      ctx.lineTo(nextX - spacing / 2, lastY - spacing / 2);
+      // Vertikaler Strich (nach unten)
+      ctx.lineTo(nextX - spacing / 2, lastY + spacing / 2);
+      // Horizontale Linie nach rechts bis zum Rand
+      ctx.lineTo(startX + gridWidth + 10, lastY + spacing / 2);
       ctx.stroke();
     }
   }
