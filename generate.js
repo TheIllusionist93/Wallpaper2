@@ -21,7 +21,7 @@ const config = {
     spacing: 42,
   },
   layout: {
-    verticalOffset: -50,
+    verticalOffset: -30,
   },
   progressBar: {
     show: true,
@@ -69,7 +69,7 @@ ctx.fillRect(0, 0, 1170, 2532);
 const cols = 14; // 2 Wochen (7+7)
 const dotSize = config.dots.size;
 const spacing = config.dots.spacing;
-const weekGap = 35; // Lücke zwischen den Wochen
+const weekGap = 45; // Lücke zwischen den Wochen
 
 // Grid-Breite mit Lücke
 const firstWeekWidth = 6 * spacing + dotSize;
@@ -214,7 +214,7 @@ if (config.progressBar.show) {
 // ═══════════════════════════════════════════════════════════════════
 
 const buffer = canvas.toBuffer('image/png');
-fs.writeFileSync('wallpaper-dark-pink.png', buffer);
+fs.writeFileSync('wallpaper-dark.png', buffer);
 
 console.log('✅ Wallpaper erfolgreich erstellt: wallpaper-dark-pink.png');
 console.log(`   ${percentage}% des Jahres ${year} sind vergangen`);
