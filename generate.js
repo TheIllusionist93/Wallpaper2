@@ -49,7 +49,13 @@ const isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
 const daysInYear = isLeap ? 366 : 365;
 const percentage = Math.round((dayOfYear / daysInYear) * 100);
 
+// Wochentag des 1. Januar berechnen (0=Sonntag, 1=Montag, ..., 6=Samstag)
+const firstDayOfYear = new Date(year, 0, 1).getDay();
+// Offset berechnen: Montag=0, Dienstag=1, ..., Sonntag=6
+const offset = firstDayOfYear === 0 ? 6 : firstDayOfYear - 1; // Donnerstag (4) -> offset=3
+
 console.log(`📅 Generiere Wallpaper für Tag ${dayOfYear}/${daysInYear} (${percentage}%)`);
+console.log(`   Erster Tag ist ${['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'][firstDayOfYear]} -> Offset: ${offset}`);
 
 // ═══════════════════════════════════════════════════════════════════
 // 🖼️ CANVAS ERSTELLEN
@@ -71,12 +77,15 @@ const dotSize = config.dots.size;
 const spacing = config.dots.spacing;
 const weekGap = 45; // Lücke zwischen den Wochen
 
+// Gesamtzahl der Grid-Positionen (inklusive Offset am Anfang)
+const totalPositions = offset + daysInYear;
+
 // Grid-Breite mit Lücke
 const firstWeekWidth = 6 * spacing + dotSize;
 const secondWeekWidth = 6 * spacing + dotSize;
 const gridWidth = firstWeekWidth + weekGap + secondWeekWidth;
 
-const gridHeight = Math.ceil(daysInYear / cols) * spacing;
+const gridHeight = Math.ceil(totalPositions / cols) * spacing;
 const startX = (1170 - gridWidth) / 2;
 const startY = (2532 - gridHeight) / 2 + config.layout.verticalOffset;
 
@@ -85,8 +94,9 @@ const startY = (2532 - gridHeight) / 2 + config.layout.verticalOffset;
 // ═══════════════════════════════════════════════════════════════════
 
 for (let i = 0; i < daysInYear; i++) {
-  const row = Math.floor(i / cols);
-  const col = i % cols;
+  const gridPosition = offset + i; // Position im Grid mit Offset
+  const row = Math.floor(gridPosition / cols);
+  const col = gridPosition % cols;
   
   // X-Position mit Lücke nach 7 Punkten
   let x;
@@ -132,8 +142,9 @@ for (let monthIndex = 0; monthIndex < daysPerMonth.length - 1; monthIndex++) {
   
   if (lastDayOfMonth >= daysInYear) break;
   
-  const row = Math.floor(lastDayOfMonth / cols);
-  const col = lastDayOfMonth % cols;
+  const lastGridPos = offset + lastDayOfMonth;
+  const row = Math.floor(lastGridPos / cols);
+  const col = lastGridPos % cols;
   
   // Position des letzten Punkts des Monats
   let lastX;
@@ -146,8 +157,9 @@ for (let monthIndex = 0; monthIndex < daysPerMonth.length - 1; monthIndex++) {
   
   const firstDayNextMonth = cumulativeDays;
   if (firstDayNextMonth < daysInYear) {
-    const nextRow = Math.floor(firstDayNextMonth / cols);
-    const nextCol = firstDayNextMonth % cols;
+    const nextGridPos = offset + firstDayNextMonth;
+    const nextRow = Math.floor(nextGridPos / cols);
+    const nextCol = nextGridPos % cols;
     
     let nextX;
     if (nextCol < 7) {
