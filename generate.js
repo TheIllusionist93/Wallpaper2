@@ -21,7 +21,7 @@ const config = {
     spacing: 42,
   },
   layout: {
-    verticalOffset: 150,
+    verticalOffset: 120,
   },
   progressBar: {
     show: true,
@@ -131,7 +131,7 @@ const daysPerMonth = isLeap
   : [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 ctx.strokeStyle = config.colors.monthLines;
-ctx.lineWidth = 1;
+ctx.lineWidth = 1.5;
 ctx.globalAlpha = 0.5;
 
 let cumulativeDays = 0;
